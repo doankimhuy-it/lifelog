@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "module": "CommonJS",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "outDir": "./dist",
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictBindCallApply": true,
+    "strictNullChecks": true,
+    "target": "ES2021"
+  }
+}

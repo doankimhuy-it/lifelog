@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model Blog {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt() @db.Timestamptz(6)
+  slug         String        @unique(map: "SLUG_IDX")
+  title        String        @unique(map: "TITLE_IDX")
+  description  String
+  content      String
+  authorId     Int
+  user         User          @relation(fields: [authorId], references: [id], onDelete: NoAction, map: "blogs_author_id_foreign")
+  interactions Interaction[]
+
+  @@map("blogs")
+}
+
+model Interaction {
+  id                  Int             @id @default(autoincrement())
+  createdAt           DateTime        @default(now()) @db.Timestamptz(6)
+  updatedAt           DateTime        @updatedAt() @db.Timestamptz(6)
+  type                InteractionType
+  interactedOn        InteractedOn
+  content             String?
+  interactedCommentId Int?
+  blogId              Int
+  authorId            Int
+  user                User            @relation(fields: [authorId], references: [id], onDelete: NoAction, map: "interactions_author_id_foreign")
+  blog                Blog            @relation(fields: [blogId], references: [id], onDelete: NoAction, map: "interactions_blog_id_foreign")
+
+  @@map("interactions")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt() @db.Timestamptz(6)
+  fullName     String
+  username     String        @unique(map: "USERNAME_IDX")
+  email        String        @unique(map: "EMAIL_IDX")
+  password     String
+  avatar       String?
+  roles        String[]      @default(["user"])
+  Blogs        Blog[]
+  Interactions Interaction[]
+
+  @@map("users")
+}
+
+enum InteractedOn {
+  undefined
+  blog
+  comment
+}
+
+enum InteractionType {
+  undefined
+  like
+  comment
+}
