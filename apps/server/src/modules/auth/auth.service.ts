@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   async logIn(logInDto: LogInDto): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOneByUsernameOrEmail(
+    const user = await this.usersService.findOnePrivate(
       logInDto.email ?? logInDto.username ?? '',
     );
     if (!user) {
@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async signUp(signUpDto: SignUpDto): Promise<{ access_token: string }> {
-    const existingUser = await this.usersService.findOneByUsernameOrEmail(
+    const existingUser = await this.usersService.findOnePrivate(
       signUpDto.email,
     );
     if (existingUser) {

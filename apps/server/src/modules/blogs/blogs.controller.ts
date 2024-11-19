@@ -28,8 +28,8 @@ export class BlogsController {
   @Post()
   @UseGuards(AuthGuard)
   async create(@Request() req: any, @Body() createBlogReq: CreateBlogDto) {
-    const authorId: number = req.user.id;
-    return this.blogsService.create(authorId, createBlogReq);
+    const userId: number = req.user.id;
+    return this.blogsService.create(userId, createBlogReq);
   }
 
   @Post('filters')
@@ -38,7 +38,7 @@ export class BlogsController {
   }
 
   @Get(':slug')
-  findOne(@Param('slug') slug: string) {
+  findOneBySlug(@Param('slug') slug: string) {
     return this.blogsService.findOneBySlug(slug);
   }
 
@@ -50,7 +50,7 @@ export class BlogsController {
     @Body() updateBlogDto: UpdateBlogDto,
   ) {
     const blog = await this.blogsService.findOneById(id);
-    if (req.user.id !== blog?.authorId) {
+    if (req.user.id !== blog?.userId) {
       throw new UnauthorizedException('You are not allowed to edit');
     }
     return this.blogsService.update(id, updateBlogDto);
@@ -60,7 +60,7 @@ export class BlogsController {
   @UseGuards(AuthGuard)
   async remove(@Request() req: any, @Param('id') id: number) {
     const blog = await this.blogsService.findOneById(id);
-    if (req.user.id !== blog?.authorId) {
+    if (req.user.id !== blog?.userId) {
       throw new UnauthorizedException('You are not allowed to delete');
     }
     return this.blogsService.delete(id);

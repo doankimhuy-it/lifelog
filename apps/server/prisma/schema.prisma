@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
 }
 
 datasource db {
@@ -7,61 +8,86 @@ datasource db {
   url      = env("DB_URL")
 }
 
-model Blog {
-  id           Int           @id @default(autoincrement())
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt() @db.Timestamptz(6)
-  slug         String        @unique(map: "SLUG_IDX")
-  title        String        @unique(map: "TITLE_IDX")
-  description  String
-  content      String
-  authorId     Int
-  user         User          @relation(fields: [authorId], references: [id], onDelete: NoAction, map: "blogs_author_id_foreign")
-  interactions Interaction[]
-
-  @@map("blogs")
-}
-
-model Interaction {
-  id                  Int             @id @default(autoincrement())
-  createdAt           DateTime        @default(now()) @db.Timestamptz(6)
-  updatedAt           DateTime        @updatedAt() @db.Timestamptz(6)
-  type                InteractionType
-  interactedOn        InteractedOn
-  content             String?
-  interactedCommentId Int?
-  blogId              Int
-  authorId            Int
-  user                User            @relation(fields: [authorId], references: [id], onDelete: NoAction, map: "interactions_author_id_foreign")
-  blog                Blog            @relation(fields: [blogId], references: [id], onDelete: NoAction, map: "interactions_blog_id_foreign")
-
-  @@map("interactions")
-}
-
 model User {
-  id           Int           @id @default(autoincrement())
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime      @updatedAt() @db.Timestamptz(6)
+  id           Int            @id @default(autoincrement())
   fullName     String
-  username     String        @unique(map: "USERNAME_IDX")
-  email        String        @unique(map: "EMAIL_IDX")
+  username     String         @unique(map: "USERNAME_IDX")
+  email        String         @unique(map: "EMAIL_IDX")
   password     String
   avatar       String?
-  roles        String[]      @default(["user"])
-  Blogs        Blog[]
-  Interactions Interaction[]
+  blogs        Blog[]
+  comments     Comment[]
+  likedBlog    LikedBlog[]
+  likedComment LikedComment[]
+  Bookmark     Bookmark[]
+  createdAt    DateTime       @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime       @updatedAt() @db.Timestamptz(6)
 
   @@map("users")
 }
 
-enum InteractedOn {
-  undefined
-  blog
-  comment
+model Blog {
+  id          Int         @id @default(autoincrement())
+  slug        String      @unique(map: "SLUG_IDX")
+  title       String      @unique(map: "TITLE_IDX")
+  description String
+  content     String
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  comments    Comment[]
+  likedBlog   LikedBlog[]
+  bookmark    Bookmark[]
+  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime    @updatedAt() @db.Timestamptz(6)
+
+  @@map("blogs")
 }
 
-enum InteractionType {
-  undefined
-  like
-  comment
+model Comment {
+  id              Int            @id @default(autoincrement())
+  content         String
+  blogId          Int
+  userId          Int
+  parentCommentId Int?
+  user            User           @relation(fields: [userId], references: [id])
+  blog            Blog           @relation(fields: [blogId], references: [id])
+  parentComment   Comment?       @relation(name: "ParentChildren", fields: [parentCommentId], references: [id])
+  childComments   Comment[]      @relation(name: "ParentChildren")
+  likedComment    LikedComment[]
+  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+
+  @@map("comments")
+}
+
+model LikedBlog {
+  userId    Int
+  blogId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id(name: "likeId", [userId, blogId])
+  @@map("liked_blogs")
+}
+
+model LikedComment {
+  userId    Int
+  commentId Int
+  user      User     @relation(fields: [userId], references: [id])
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id(name: "likeId", [userId, commentId])
+  @@map("liked_comments")
+}
+
+model Bookmark {
+  userId    Int
+  blogId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+
+  @@id(name: "bookmarkId", [userId, blogId])
+  @@map("bookmarks")
 }

@@ -18,13 +18,14 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get(':username')
   findOne(@Param('username') username: string) {
-    return this.usersService.findOneByUsernameOrEmail(username);
+    return this.usersService.findOneProfile(username);
   }
 
   @Patch(':username')

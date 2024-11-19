@@ -33,8 +33,21 @@ export class UsersService {
     });
   }
 
-  async findOneByUsernameOrEmail(input: string) {
+  async findOnePrivate(input: string) {
+    return await this.prismaService.user.findFirst({
+      where: {
+        OR: [{ username: input }, { email: input }],
+      },
+    });
+  }
+
+  async findOneProfile(input: string) {
     return await this.prismaService.user.findFirstOrThrow({
+      omit: {
+        password: true,
+        createdAt: true,
+        updatedAt: true,
+      },
       where: {
         OR: [{ username: input }, { email: input }],
       },

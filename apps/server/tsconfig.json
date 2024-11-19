@@ -17,5 +17,6 @@
     "strictBindCallApply": true,
     "strictNullChecks": true,
     "target": "ES2021"
-  }
+  },
+  "include": ["src", "**/*.ts", "**/*.js", "**/*.mjs"]
 }

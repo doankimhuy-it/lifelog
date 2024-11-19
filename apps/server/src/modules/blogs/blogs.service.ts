@@ -10,21 +10,23 @@ import slug from 'slug';
 export class BlogsService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async create(authorId: number, createBlogDto: CreateBlogDto) {
+  async create(userId: number, createBlogDto: CreateBlogDto) {
     return await this.prismaService.blog.create({
       data: {
         title: createBlogDto.title,
         slug: slug(createBlogDto.title),
         description: createBlogDto.description,
         content: createBlogDto.content,
-        authorId: authorId,
+        userId: userId,
       },
     });
   }
 
   async findAll() {
     return await this.prismaService.blog.findMany({
-      include: { user: { select: { fullName: true, avatar: true } } },
+      include: {
+        user: { select: { fullName: true, avatar: true } },
+      },
     });
   }
 
@@ -67,14 +69,28 @@ export class BlogsService {
   }
 
   async findOneBySlug(slug: string) {
-    return await this.prismaService.blog.findUniqueOrThrow({
+    return await this.prismaService.blog.findUnique({
       where: { slug: slug },
+      include: {
+        comments: {
+          include: { childComments: true },
+          where: { parentCommentId: null },
+        },
+        _count: { select: { likedBlog: true, comments: true } },
+      },
     });
   }
 
   async findOneById(id: number) {
-    return await this.prismaService.blog.findUniqueOrThrow({
+    return await this.prismaService.blog.findUnique({
       where: { id: +id },
+      include: {
+        comments: {
+          include: { childComments: true },
+          where: { parentCommentId: null },
+        },
+        _count: { select: { likedBlog: true, comments: true } },
+      },
     });
   }
 
