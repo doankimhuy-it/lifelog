@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import bcrypt from 'bcrypt';
+import { HashSaltRounds } from '../../constants/common.constant';
+import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import bcrypt from 'bcrypt';
-import { HashSaltRounds } from '../../constants/module.constant';
-import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class UsersService {

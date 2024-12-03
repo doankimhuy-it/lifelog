@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
-import { Day, OrderBy } from '../../../constants/module.constant';
+import { Day } from '../../../constants/common.constant';
+import { OrderBy } from '../../../constants/enum.constant';
 
 export class FindBlogDto {
   author?: string;

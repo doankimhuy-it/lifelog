@@ -1,23 +1,23 @@
 import {
-  Controller,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Request,
   Get,
+  Param,
+  Post,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthnGuard } from '../../guards/authn.guard';
 import { CommentsService } from './comments.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { AuthGuard } from '../../guards/auth.guard';
 
 @Controller('comments')
-export class CommentController {
+export class CommentsController {
   constructor(private readonly commentService: CommentsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthnGuard)
   create(@Request() req: any, @Body() createCommentReq: CreateCommentDto) {
     const userId: number = req.user.id;
     return this.commentService.create(userId, createCommentReq);
@@ -25,11 +25,11 @@ export class CommentController {
 
   @Get(':id')
   get(@Param('id') id: number) {
-    return this.commentService.findOne(id);
+    return this.commentService.findOneById(id);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthnGuard)
   delete(@Param('id') id: number) {
     return this.commentService.delete(id);
   }

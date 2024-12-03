@@ -23,7 +23,7 @@ export class AuthService {
     if (!bcrypt.compareSync(logInDto.password, user.password)) {
       throw new BadRequestException('Password does not match');
     }
-    const payload = { id: user.id, username: user.username };
+    const { password, ...payload } = user;
     return {
       access_token: await this.jwtService.signAsync(payload),
     };

@@ -17,7 +17,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:generate": "dotenv -e .env -- pnpm prisma generate",
+    "prisma:generate": "dotenv -e .env -- prisma generate",
     "migrate:generate": "prisma migrate dev --name -- --create-only",
     "migrate:run": "prisma migrate dev"
   },
@@ -31,7 +31,8 @@
     "bcrypt": "^5.1.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "slug": "9.1.0"
+    "slug": "9.1.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.1.0",

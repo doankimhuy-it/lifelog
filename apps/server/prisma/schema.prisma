@@ -9,85 +9,75 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  fullName     String
-  username     String         @unique(map: "USERNAME_IDX")
-  email        String         @unique(map: "EMAIL_IDX")
-  password     String
-  avatar       String?
-  blogs        Blog[]
-  comments     Comment[]
-  likedBlog    LikedBlog[]
-  likedComment LikedComment[]
-  Bookmark     Bookmark[]
-  createdAt    DateTime       @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime       @updatedAt() @db.Timestamptz(6)
+  id        Int        @id @default(autoincrement())
+  fullName  String
+  username  String     @unique(map: "USERNAME_IDX")
+  email     String     @unique(map: "EMAIL_IDX")
+  password  String
+  avatar    String?
+  blogs     Blog[]
+  comments  Comment[]
+  likes     Like[]
+  Bookmark  Bookmark[]
+  createdAt DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime   @updatedAt() @db.Timestamptz(6)
 
   @@map("users")
 }
 
 model Blog {
-  id          Int         @id @default(autoincrement())
-  slug        String      @unique(map: "SLUG_IDX")
-  title       String      @unique(map: "TITLE_IDX")
+  id          Int        @id @default(autoincrement())
+  slug        String     @unique(map: "SLUG_IDX")
+  title       String     @unique(map: "TITLE_IDX")
   description String
   content     String
   userId      Int
-  user        User        @relation(fields: [userId], references: [id])
+  user        User       @relation(fields: [userId], references: [id])
   comments    Comment[]
-  likedBlog   LikedBlog[]
+  likes       Like[]
   bookmark    Bookmark[]
-  createdAt   DateTime    @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime    @updatedAt() @db.Timestamptz(6)
+  createdAt   DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime   @updatedAt() @db.Timestamptz(6)
 
   @@map("blogs")
 }
 
 model Comment {
-  id              Int            @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   content         String
   blogId          Int
   userId          Int
   parentCommentId Int?
-  user            User           @relation(fields: [userId], references: [id])
-  blog            Blog           @relation(fields: [blogId], references: [id])
-  parentComment   Comment?       @relation(name: "ParentChildren", fields: [parentCommentId], references: [id])
-  childComments   Comment[]      @relation(name: "ParentChildren")
-  likedComment    LikedComment[]
-  createdAt       DateTime       @default(now()) @db.Timestamptz(6)
+  user            User      @relation(fields: [userId], references: [id])
+  blog            Blog      @relation(fields: [blogId], references: [id])
+  likes           Like[]
+  parentComment   Comment?  @relation(name: "ParentChildrenComments", fields: [parentCommentId], references: [id])
+  childComments   Comment[] @relation(name: "ParentChildrenComments")
+  createdAt       DateTime  @default(now()) @db.Timestamptz(6)
 
   @@map("comments")
 }
 
-model LikedBlog {
-  userId    Int
+model Like {
+  id        Int      @id @default(autoincrement())
   blogId    Int
+  commentId Int?
+  userId    Int
   user      User     @relation(fields: [userId], references: [id])
   blog      Blog     @relation(fields: [blogId], references: [id])
+  Comment   Comment? @relation(fields: [commentId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamptz(6)
 
-  @@id(name: "likeId", [userId, blogId])
-  @@map("liked_blogs")
-}
-
-model LikedComment {
-  userId    Int
-  commentId Int
-  user      User     @relation(fields: [userId], references: [id])
-  comment   Comment  @relation(fields: [commentId], references: [id])
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-
-  @@id(name: "likeId", [userId, commentId])
-  @@map("liked_comments")
+  @@map("likes")
 }
 
 model Bookmark {
+  id        Int      @id @default(autoincrement())
   userId    Int
   blogId    Int
   user      User     @relation(fields: [userId], references: [id])
   blog      Blog     @relation(fields: [blogId], references: [id])
   createdAt DateTime @default(now()) @db.Timestamptz(6)
 
-  @@id(name: "bookmarkId", [userId, blogId])
   @@map("bookmarks")
 }

@@ -1,20 +1,21 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Get,
+  Param,
+  Patch,
+  Post,
   Request,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthnGuard } from '../../guards/authn.guard';
+import { AuthzGuard } from '../../guards/authz.guard';
 import { BlogsService } from './blogs.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
-import { AuthGuard } from '../../guards/auth.guard';
 import { FindBlogDto } from './dto/find-blog.dto';
+import { UpdateBlogDto } from './dto/update-blog.dto';
 
 @Controller('blogs')
 export class BlogsController {
@@ -26,7 +27,7 @@ export class BlogsController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthnGuard)
   async create(@Request() req: any, @Body() createBlogReq: CreateBlogDto) {
     const userId: number = req.user.id;
     return this.blogsService.create(userId, createBlogReq);
@@ -43,21 +44,13 @@ export class BlogsController {
   }
 
   @Patch(':id')
-  @UseGuards(AuthGuard)
-  async update(
-    @Request() req: any,
-    @Param('id') id: number,
-    @Body() updateBlogDto: UpdateBlogDto,
-  ) {
-    const blog = await this.blogsService.findOneById(id);
-    if (req.user.id !== blog?.userId) {
-      throw new UnauthorizedException('You are not allowed to edit');
-    }
+  @UseGuards(AuthnGuard, AuthzGuard)
+  async update(@Param('id') id: number, @Body() updateBlogDto: UpdateBlogDto) {
     return this.blogsService.update(id, updateBlogDto);
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthnGuard)
   async remove(@Request() req: any, @Param('id') id: number) {
     const blog = await this.blogsService.findOneById(id);
     if (req.user.id !== blog?.userId) {

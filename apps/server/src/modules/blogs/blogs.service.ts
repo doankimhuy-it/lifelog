@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateBlogDto } from './dto/create-blog.dto';
-import { UpdateBlogDto } from './dto/update-blog.dto';
-import { FindBlogDto } from './dto/find-blog.dto';
-import { OrderBy } from '../../constants/module.constant';
-import { PrismaService } from '../prisma/prisma.service';
 import slug from 'slug';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateBlogDto } from './dto/create-blog.dto';
+import { FindBlogDto } from './dto/find-blog.dto';
+import { UpdateBlogDto } from './dto/update-blog.dto';
+import { OrderBy } from '../../constants/enum.constant';
 
 @Injectable()
 export class BlogsService {
@@ -76,7 +76,7 @@ export class BlogsService {
           include: { childComments: true },
           where: { parentCommentId: null },
         },
-        _count: { select: { likedBlog: true, comments: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
   }
@@ -89,7 +89,7 @@ export class BlogsService {
           include: { childComments: true },
           where: { parentCommentId: null },
         },
-        _count: { select: { likedBlog: true, comments: true } },
+        _count: { select: { likes: true, comments: true } },
       },
     });
   }

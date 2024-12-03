@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateCommentDto } from './dto/create-comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -35,7 +35,7 @@ export class CommentsService {
     });
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     return await this.prismaService.comment.findUniqueOrThrow({
       where: { id: +id },
       include: {
