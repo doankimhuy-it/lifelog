@@ -1,13 +1,13 @@
 import { SidebarProvider, SidebarTrigger } from '@/components/sidebar';
-import { AppSidebar } from '@/layouts/components/app-sidebar';
+import { AppSidebar } from '@/layouts/desktop/app-sidebar';
 import { Outlet } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
-import { BottomNavbar } from './components/bottom-navbar';
+import { BottomNavbar } from './mobile/bottom-navbar';
 
 export const MainLayout = () => {
   const isMobile = useIsMobile();
 
-  return !isMobile ? (
+  return isMobile ? (
     <>
       <Outlet />
       <BottomNavbar />
@@ -16,7 +16,7 @@ export const MainLayout = () => {
     <SidebarProvider>
       <AppSidebar />
       <main>
-        <header className="flex h-16 items-center px-2">
+        <header className="flex items-center h-16 px-2">
           <SidebarTrigger />
         </header>
         <Outlet />

@@ -2,8 +2,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -11,15 +9,7 @@ import {
   SidebarRail,
 } from '@/components/sidebar';
 import LifeLogLogo from '@assets/png/lifelog.png';
-import {
-  Bell,
-  Bookmark,
-  ChevronsUpDown,
-  House,
-  LogOut,
-  User,
-  UserCog,
-} from 'lucide-react';
+import { ChevronsUpDown, LogOut, UserCog } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '../../components/avatar';
 import {
@@ -29,29 +19,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../../components/dropdown-menu';
-
-const items = [
-  {
-    title: 'Home',
-    icon: House,
-    path: '/',
-  },
-  {
-    title: 'Notifications',
-    icon: Bell,
-    path: '/notifications',
-  },
-  {
-    title: 'Bookmarks',
-    icon: Bookmark,
-    path: '/bookmarks',
-  },
-  {
-    title: 'Profile',
-    icon: User,
-    path: '/users/1',
-  },
-];
+import { NavigationGroup } from './navigation-group';
+import { TagGroup } from './tag-group';
 
 const user = {
   name: 'shadcn',
@@ -72,22 +41,8 @@ export const AppSidebar = () => {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.path}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavigationGroup />
+        <TagGroup />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
